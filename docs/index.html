@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>k8s-scheduler-sim report</title>
+<style>
+:root{--bg:#0b0f14;--panel:#121b23;--card:#16232d;--line:#23343f;--text:#eaf1f8;--muted:#8ba3b5;--accent:#00adb5;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--run:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1000px 500px at 50% -10%,#123039 0%,var(--bg) 55%);color:var(--text);font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:40px 20px 64px}
+h1{font-size:26px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px}
+@media(max-width:760px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card .k{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.card .v{font-size:26px;font-weight:700;margin-top:2px}
+.card .v.ok{color:var(--ok)}.card .v.warn{color:var(--warn)}.card .v.bad{color:var(--bad)}.card .v.run{color:var(--run)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.panel h2{font-size:16px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+td.num{font-family:ui-monospace,Consolas,monospace}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#0b141a;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12px}
+.badge{display:inline-block;font-size:11px;border-radius:999px;padding:1px 8px;border:1px solid var(--line)}
+.badge.ok{color:var(--ok);border-color:var(--ok)}.badge.bad{color:var(--bad);border-color:var(--bad)}
+.badge.run{color:var(--run);border-color:var(--run)}.badge.warn{color:var(--warn);border-color:var(--warn)}
+.muted{color:var(--muted)}
+.reasons{color:var(--muted);font-size:12px;margin-top:4px}
+.reasons div{margin-top:2px}
+.node{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px}
+.node h3{font-size:14px;margin:0;display:flex;gap:8px;align-items:baseline}
+.node h3 .pods{margin-left:auto;color:var(--muted);font-size:12px;font-weight:400}
+.bar-row{display:grid;grid-template-columns:52px 1fr 120px;gap:10px;align-items:center;margin-top:9px;font-size:12px}
+.bar-row .label{color:var(--muted)}
+.bar{height:8px;border-radius:999px;background:#0b141a;overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,#00adb5,#3fb950)}
+.bar.high span{background:linear-gradient(90deg,#d29922,#f85149)}
+.bar-row .value{text-align:right;font-family:ui-monospace,Consolas,monospace}
+.empty{color:var(--muted);font-size:13px}
+footer{color:var(--muted);font-size:12px;margin-top:30px}
+</style>
+</head>
+<body>
+<main>
+<h1>Scheduler simulation</h1>
+<div class="sub">Source: examples\capture.json · generated 2026-11-05 08:58 IST</div>
+
+<div class="cards">
+  <div class="card"><div class="k">Nodes</div><div class="v">4</div></div>
+  <div class="card"><div class="k">Pending pods</div><div class="v">5</div></div>
+  <div class="card"><div class="k">Scheduled</div><div class="v ok">3</div></div>
+  <div class="card"><div class="k">Unschedulable</div><div class="v bad">2</div></div>
+</div>
+
+<div class="panel">
+<h2>Placements</h2>
+<table>
+<thead><tr><th>Pod</th><th>Requests</th><th>Decision</th><th>Score</th></tr></thead>
+<tbody><tr>
+<td><code>data/needs-ssd</code></td>
+<td class="num">cpu 1<br>mem 2.0Gi</td>
+<td><span class="badge bad">unschedulable</span><div class="reasons"><div>cpu-a: nodeSelector disk=ssd does not match</div><div>cpu-b: node is unschedulable</div><div>gpu-a: nodeSelector disk=ssd does not match</div><div>gpu-b: nodeSelector disk=ssd does not match</div></div></td>
+<td class="num">-</td>
+</tr><tr>
+<td><code>default/batch</code></td>
+<td class="num">cpu 2<br>mem 4.0Gi</td>
+<td><span class="badge ok">cpu-a</span></td>
+<td class="num">62</td>
+</tr><tr>
+<td><code>ml/inference</code></td>
+<td class="num">cpu 2<br>mem 8.0Gi<br>gpu 1</td>
+<td><span class="badge ok">gpu-b</span></td>
+<td class="num">74</td>
+</tr><tr>
+<td><code>ml/too-big</code></td>
+<td class="num">cpu 32<br>mem 128.0Gi<br>gpu 4</td>
+<td><span class="badge bad">unschedulable</span><div class="reasons"><div>cpu-a: nodeSelector pool=gpu does not match</div><div>cpu-b: node is unschedulable</div><div>gpu-a: insufficient cpu (needs 32, free 12), insufficient memory (needs 128.0Gi, free 48.0Gi), insufficient gpu (needs 4, free 1)</div><div>gpu-b: insufficient cpu (needs 32, free 14), insufficient memory (needs 128.0Gi, free 56.0Gi), insufficient gpu (needs 4, free 1)</div></div></td>
+<td class="num">-</td>
+</tr><tr>
+<td><code>ml/train-new</code></td>
+<td class="num">cpu 4<br>mem 16.0Gi<br>gpu 1</td>
+<td><span class="badge ok">gpu-b</span></td>
+<td class="num">41</td>
+</tr></tbody>
+</table>
+</div>
+
+<div class="panel">
+<h2>Node usage after simulation</h2>
+<article class="node">
+<h3>cpu-a<span class="pods">2 pods</span></h3>
+<div class="bar-row"><span class="label">CPU</span><div class="bar"><span style="width:50%"></span></div><span class="value">4/8</span></div>
+<div class="bar-row"><span class="label">Memory</span><div class="bar"><span style="width:25%"></span></div><span class="value">8.0Gi/32.0Gi</span></div>
+<div class="bar-row"><span class="label">GPU</span><div class="bar"><span style="width:0%"></span></div><span class="value">0/0</span></div>
+</article><article class="node">
+<h3>cpu-b <span class="badge warn">unschedulable</span><span class="pods">0 pods</span></h3>
+<div class="bar-row"><span class="label">CPU</span><div class="bar"><span style="width:0%"></span></div><span class="value">0/8</span></div>
+<div class="bar-row"><span class="label">Memory</span><div class="bar"><span style="width:0%"></span></div><span class="value">0/32.0Gi</span></div>
+<div class="bar-row"><span class="label">GPU</span><div class="bar"><span style="width:0%"></span></div><span class="value">0/0</span></div>
+</article><article class="node">
+<h3>gpu-a<span class="pods">1 pods</span></h3>
+<div class="bar-row"><span class="label">CPU</span><div class="bar"><span style="width:25%"></span></div><span class="value">4/16</span></div>
+<div class="bar-row"><span class="label">Memory</span><div class="bar"><span style="width:25%"></span></div><span class="value">16.0Gi/64.0Gi</span></div>
+<div class="bar-row"><span class="label">GPU</span><div class="bar"><span style="width:50%"></span></div><span class="value">1/2</span></div>
+</article><article class="node">
+<h3>gpu-b<span class="pods">2 pods</span></h3>
+<div class="bar-row"><span class="label">CPU</span><div class="bar"><span style="width:37%"></span></div><span class="value">6/16</span></div>
+<div class="bar-row"><span class="label">Memory</span><div class="bar"><span style="width:37%"></span></div><span class="value">24.0Gi/64.0Gi</span></div>
+<div class="bar-row"><span class="label">GPU</span><div class="bar"><span style="width:100%"></span></div><span class="value">2/2</span></div>
+</article>
+</div>
+
+<footer>Generated by k8s-scheduler-sim v1.0.0. This is a filter-and-score simulation over a saved capture, not a running kube-scheduler. Existing pods count as allocated; pending pods are placed in namespace/name order.</footer>
+</main>
+</body>
+</html>

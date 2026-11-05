@@ -1,0 +1,148 @@
+{
+  "nodes": [
+    {
+      "metadata": {
+        "name": "cpu-a",
+        "labels": { "pool": "cpu", "kubernetes.io/arch": "amd64" }
+      },
+      "status": {
+        "allocatable": { "cpu": "8", "memory": "32Gi" }
+      }
+    },
+    {
+      "metadata": {
+        "name": "cpu-b",
+        "labels": { "pool": "cpu", "kubernetes.io/arch": "amd64" }
+      },
+      "spec": { "unschedulable": true },
+      "status": {
+        "allocatable": { "cpu": "8", "memory": "32Gi" }
+      }
+    },
+    {
+      "metadata": {
+        "name": "gpu-a",
+        "labels": { "pool": "gpu", "nvidia.com/gpu.product": "NVIDIA-A100-SXM4-40GB" }
+      },
+      "spec": {
+        "taints": [{ "key": "dedicated", "value": "gpu", "effect": "NoSchedule" }]
+      },
+      "status": {
+        "allocatable": { "cpu": "16", "memory": "64Gi", "nvidia.com/gpu": "2" }
+      }
+    },
+    {
+      "metadata": {
+        "name": "gpu-b",
+        "labels": { "pool": "gpu", "nvidia.com/gpu.product": "NVIDIA-A100-SXM4-40GB" }
+      },
+      "spec": {
+        "taints": [{ "key": "dedicated", "value": "gpu", "effect": "NoSchedule" }]
+      },
+      "status": {
+        "allocatable": { "cpu": "16", "memory": "64Gi", "nvidia.com/gpu": "2" }
+      }
+    }
+  ],
+  "pods": [
+    {
+      "metadata": { "name": "web", "namespace": "default" },
+      "spec": {
+        "nodeName": "cpu-a",
+        "containers": [
+          {
+            "name": "web",
+            "resources": { "requests": { "cpu": "2", "memory": "4Gi" } }
+          }
+        ]
+      },
+      "status": { "phase": "Running" }
+    },
+    {
+      "metadata": { "name": "train-old", "namespace": "ml" },
+      "spec": {
+        "nodeName": "gpu-a",
+        "containers": [
+          {
+            "name": "trainer",
+            "resources": { "requests": { "cpu": "4", "memory": "16Gi", "nvidia.com/gpu": "1" } }
+          }
+        ]
+      },
+      "status": { "phase": "Running" }
+    },
+    {
+      "metadata": { "name": "needs-ssd", "namespace": "data" },
+      "spec": {
+        "nodeSelector": { "disk": "ssd" },
+        "containers": [
+          {
+            "name": "loader",
+            "resources": { "requests": { "cpu": "1", "memory": "2Gi" } }
+          }
+        ]
+      },
+      "status": { "phase": "Pending" }
+    },
+    {
+      "metadata": { "name": "batch", "namespace": "default" },
+      "spec": {
+        "containers": [
+          {
+            "name": "batch",
+            "resources": { "requests": { "cpu": "2", "memory": "4Gi" } }
+          }
+        ]
+      },
+      "status": { "phase": "Pending" }
+    },
+    {
+      "metadata": { "name": "inference", "namespace": "ml" },
+      "spec": {
+        "nodeSelector": { "pool": "gpu" },
+        "tolerations": [
+          { "key": "dedicated", "operator": "Equal", "value": "gpu", "effect": "NoSchedule" }
+        ],
+        "containers": [
+          {
+            "name": "server",
+            "resources": { "requests": { "cpu": "2", "memory": "8Gi", "nvidia.com/gpu": "1" } }
+          }
+        ]
+      },
+      "status": { "phase": "Pending" }
+    },
+    {
+      "metadata": { "name": "too-big", "namespace": "ml" },
+      "spec": {
+        "nodeSelector": { "pool": "gpu" },
+        "tolerations": [
+          { "key": "dedicated", "operator": "Equal", "value": "gpu", "effect": "NoSchedule" }
+        ],
+        "containers": [
+          {
+            "name": "trainer",
+            "resources": { "requests": { "cpu": "32", "memory": "128Gi", "nvidia.com/gpu": "4" } }
+          }
+        ]
+      },
+      "status": { "phase": "Pending" }
+    },
+    {
+      "metadata": { "name": "train-new", "namespace": "ml" },
+      "spec": {
+        "nodeSelector": { "pool": "gpu" },
+        "tolerations": [
+          { "key": "dedicated", "operator": "Equal", "value": "gpu", "effect": "NoSchedule" }
+        ],
+        "containers": [
+          {
+            "name": "trainer",
+            "resources": { "requests": { "cpu": "4", "memory": "16Gi", "nvidia.com/gpu": "1" } }
+          }
+        ]
+      },
+      "status": { "phase": "Pending" }
+    }
+  ]
+}
