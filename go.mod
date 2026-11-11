@@ -1,4 +1,4 @@
-module github.com/Ankitavasudev/k8s-scheduler-sim
+module github.com/Ankitavasudev/drydock
 
 go 1.21
 

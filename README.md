@@ -1,4 +1,4 @@
-# k8s-scheduler-sim
+# drydock
 
 Simulate where pending pods would land, without a cluster. It reads a saved
 snapshot of nodes and pods, applies the scheduler's filters, scores the nodes
@@ -6,7 +6,7 @@ with least-allocated, and prints the decision — or the reason every node was
 rejected.
 
 ```console
-$ k8s-scheduler-sim --from examples/capture.json
+$ drydock --from examples/capture.json
 Scheduler simulation — examples/capture.json
 Generated 2026-11-05 08:57 IST
 
@@ -46,34 +46,34 @@ Pods that already have `spec.nodeName` count against the node even when
 ## Install
 
 ```bash
-go install github.com/Ankitavasudev/k8s-scheduler-sim@latest
+go install github.com/Ankitavasudev/drydock@latest
 ```
 
 Requires Go 1.21 or newer. Or grab a prebuilt binary — every tag ships Linux,
-macOS and Windows builds (amd64 + arm64) on the [releases page](https://github.com/Ankitavasudev/k8s-scheduler-sim/releases),
+macOS and Windows builds (amd64 + arm64) on the [releases page](https://github.com/Ankitavasudev/drydock/releases),
 built with [GoReleaser](https://goreleaser.com).
 
 ## Usage
 
 ```bash
 # A saved snapshot
-k8s-scheduler-sim --from examples/capture.json
+drydock --from examples/capture.json
 
 # Raw kubectl output
 kubectl get nodes -o json > nodes.json
 kubectl get pods -A -o json > pods.json
-k8s-scheduler-sim --nodes nodes.json --pods pods.json
+drydock --nodes nodes.json --pods pods.json
 
 # The current kubectl context
-k8s-scheduler-sim
+drydock
 
 # Simulate pending pods from one namespace
-k8s-scheduler-sim --namespace ml
+drydock --namespace ml
 
 # Other formats
-k8s-scheduler-sim --from examples/capture.json -o json
-k8s-scheduler-sim --from examples/capture.json -o csv
-k8s-scheduler-sim --from examples/capture.json -o html > scheduling.html
+drydock --from examples/capture.json -o json
+drydock --from examples/capture.json -o csv
+drydock --from examples/capture.json -o html > scheduling.html
 ```
 
 ## Capture format
@@ -138,7 +138,7 @@ the real scheduler. The README would rather say so than pretend otherwise.
 ## Demo
 
 A generated report for the example capture is published at
-<https://ankitavasudev.github.io/k8s-scheduler-sim/>.
+<https://ankitavasudev.github.io/drydock/>.
 
 ## License
 

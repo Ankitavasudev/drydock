@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = "v1.0.1"
+var version = "v1.1.0"
 
 func versionString() string {
 	if info, ok := debug.ReadBuildInfo(); ok {
@@ -33,7 +33,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "k8s-scheduler-sim",
+	Use:   "drydock",
 	Short: "Simulate Kubernetes pod placement over a saved capture",
 	Long: "Filter and score nodes for pending pods using the same inputs the\n" +
 		"kube-scheduler uses: allocatable resources, existing pod requests,\n" +

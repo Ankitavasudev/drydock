@@ -31,22 +31,22 @@ jobs:
         run: go test -race ./...
 
       - name: Build
-        run: go build -o k8s-scheduler-sim .
+        run: go build -o drydock .
 
       - name: Simulate the bundled capture
         run: |
-          ./k8s-scheduler-sim --from examples/capture.json
-          ./k8s-scheduler-sim --from examples/capture.json -o json > out.json
+          ./drydock --from examples/capture.json
+          ./drydock --from examples/capture.json -o json > out.json
           grep -q '"pending": 5' out.json
           grep -q '"scheduled": 3' out.json
           grep -q '"unschedulable": 2' out.json
-          ./k8s-scheduler-sim --from examples/capture.json -o csv > out.csv
+          ./drydock --from examples/capture.json -o csv > out.csv
           grep -q 'default,batch,2000,4294967296,0,cpu-a' out.csv
-          ./k8s-scheduler-sim --from examples/capture.json --namespace ml | grep -q '3 pending pods'
+          ./drydock --from examples/capture.json --namespace ml | grep -q '3 pending pods'
 
       - name: Check the HTML report
         run: |
-          ./k8s-scheduler-sim --from examples/capture.json -o html > report.html
+          ./drydock --from examples/capture.json -o html > report.html
           grep -q '<!DOCTYPE html>' report.html
           grep -q 'Scheduler simulation' report.html
           grep -q 'gpu-b' report.html
@@ -55,4 +55,4 @@ jobs:
           ! grep -qE '(<link|<img|src="http)' report.html
 
       - name: Version
-        run: ./k8s-scheduler-sim version
+        run: ./drydock version

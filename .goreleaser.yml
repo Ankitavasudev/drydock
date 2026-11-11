@@ -1,6 +1,6 @@
 version: 2
 
-project_name: k8s-scheduler-sim
+project_name: drydock
 
 before:
   hooks:
@@ -17,7 +17,7 @@ builds:
       - amd64
       - arm64
     main: .
-    binary: k8s-scheduler-sim
+    binary: drydock
     ldflags:
       - -s -w -X main.version=v{{ .Version }}
 
