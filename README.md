@@ -49,7 +49,9 @@ Pods that already have `spec.nodeName` count against the node even when
 go install github.com/Ankitavasudev/k8s-scheduler-sim@latest
 ```
 
-Requires Go 1.21 or newer.
+Requires Go 1.21 or newer. Or grab a prebuilt binary — every tag ships Linux,
+macOS and Windows builds (amd64 + arm64) on the [releases page](https://github.com/Ankitavasudev/k8s-scheduler-sim/releases),
+built with [GoReleaser](https://goreleaser.com).
 
 ## Usage
 
